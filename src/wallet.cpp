@@ -3090,9 +3090,13 @@ static int64_t GetOldestKeyTimeInPool(const std::set<int64_t>& setKeyPool, CWall
     CKeyPool keypool;
     int64_t nIndex = *(setKeyPool.begin());
     if (!walletdb.ReadPool(nIndex, keypool)) {
-        throw std::runtime_error(std::string(__func__) + ": read oldest key in keypool failed");
+        LogPrintf("%s: read oldest key in keypool failed\n",__func__);
+        return GetTime();
     }
-    assert(keypool.vchPubKey.IsValid());
+    if (!keypool.vchPubKey.IsValid()) {
+        LogPrintf("%s: vchPubKey is invalid\n",__func__);
+        return GetTime();
+    }
     return keypool.nTime;
 }
 
